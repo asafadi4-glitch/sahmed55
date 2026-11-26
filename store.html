@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AHMED STORE | متجر أحمد</title>
+<style>
+:root{--navy:#101c32;--blue:#168bd2;--sky:#60c8ff;--ink:#17243a;--muted:#718096;--bg:#f4f7fb;--line:#e5ebf2}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+a{color:inherit;text-decoration:none}.top{background:var(--navy);color:#dcecff;text-align:center;padding:9px 14px;font-size:13px}
+header{background:#fff;position:sticky;top:0;z-index:5;box-shadow:0 3px 18px #12243a0c}
+.nav{max-width:1180px;margin:auto;padding:16px 22px;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:10px;min-width:205px}.logo{width:43px;height:43px;border-radius:13px;background:linear-gradient(145deg,#0d2748,#168bd2);display:grid;place-items:center;color:white;font-weight:900;font-size:25px;box-shadow:0 7px 18px #168bd244}
+.brand b{display:block;font-size:19px;letter-spacing:.5px;color:var(--navy)}.brand small{color:var(--blue);font-weight:bold}
+.search{flex:1;display:flex;background:#f2f6fa;border:1px solid var(--line);border-radius:12px;overflow:hidden}.search input{border:0;background:transparent;padding:13px 15px;outline:0;flex:1;font-size:14px}.search button{border:0;background:var(--blue);color:white;padding:0 20px;cursor:pointer}
+.cart{border:1px solid var(--line);border-radius:12px;background:#fff;padding:11px 14px;cursor:pointer;font-weight:bold;white-space:nowrap}.count{background:var(--blue);color:white;border-radius:20px;padding:2px 7px;margin-right:5px}
+main{max-width:1180px;margin:26px auto;padding:0 22px}.hero{background:linear-gradient(115deg,#0d1b31,#123d68 60%,#147fbd);border-radius:24px;min-height:285px;color:white;padding:45px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative}
+.hero:after{content:"";position:absolute;width:360px;height:360px;border:1px solid #ffffff22;border-radius:50%;left:6%;top:-30px;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
+.hero-copy{position:relative;z-index:1;max-width:560px}.eyebrow{color:#8bd8ff;font-weight:bold;font-size:13px}.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.25;margin:13px 0}.hero p{color:#d4e8f8;line-height:1.9;margin:0 0 22px}.cta{background:var(--sky);color:#09213b;border:0;border-radius:11px;padding:13px 22px;font-weight:bold;cursor:pointer}.hero-art{font-size:100px;position:relative;z-index:1;filter:drop-shadow(0 18px 18px #0005);margin-left:5%}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:31px 0 15px}.section-head h2{margin:0;font-size:22px}.section-head span{color:var(--muted);font-size:13px}
+.categories{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.cat{background:white;border:1px solid var(--line);border-radius:15px;padding:17px 10px;text-align:center;cursor:pointer;transition:.2s}.cat:hover,.cat.active{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 9px 22px #168bd218}.cat i{display:block;font-style:normal;font-size:28px;margin-bottom:8px}.cat b{font-size:13px}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.product{background:white;border:1px solid var(--line);border-radius:17px;padding:14px;display:flex;flex-direction:column;min-width:0}.pic{height:145px;background:linear-gradient(145deg,#f4f8fc,#e9f1f8);border-radius:12px;display:grid;place-items:center;font-size:65px;margin-bottom:13px}.tag{font-size:11px;color:#168bd2;font-weight:bold}.product h3{font-size:15px;margin:7px 0;min-height:40px}.desc{color:var(--muted);font-size:12px;margin-bottom:12px}.price-row{display:flex;justify-content:space-between;align-items:center;margin-top:auto}.price{font-weight:900;color:var(--navy);font-size:17px}.add{border:0;background:var(--navy);color:white;border-radius:9px;padding:9px 12px;cursor:pointer}.add:hover{background:var(--blue)}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0}.feature{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;gap:12px;align-items:center}.feature i{font-style:normal;font-size:25px}.feature b{display:block;font-size:14px}.feature small{color:var(--muted)}
+footer{background:var(--navy);color:#dcecff;margin-top:45px;padding:28px 22px;text-align:center}footer b{font-size:19px}footer p{color:#a9bfd5;font-size:13px}
+.toast{position:fixed;bottom:20px;left:20px;background:#10233d;color:white;padding:13px 18px;border-radius:11px;opacity:0;transform:translateY(10px);transition:.25s;z-index:9}.toast.show{opacity:1;transform:translateY(0)}
+.empty{grid-column:1/-1;text-align:center;padding:35px;background:white;border-radius:14px;color:var(--muted)}
+.whatsapp-contact{position:fixed;bottom:20px;left:20px;z-index:20;display:flex;align-items:center;gap:9px;background:#20b85a;color:#fff;padding:13px 18px;border-radius:999px;font-weight:bold;box-shadow:0 8px 24px #0003;transition:.2s}.whatsapp-contact:hover{background:#159447;transform:translateY(-2px)}.whatsapp-contact span{font-size:20px}
+@media(max-width:800px){.nav{flex-wrap:wrap;gap:12px}.brand{min-width:unset}.search{order:3;flex-basis:100%}.hero{padding:30px 24px;min-height:250px}.hero-art{font-size:70px}.categories{grid-template-columns:repeat(3,1fr)}.products{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:1fr}}
+@media(max-width:430px){main{padding:0 13px}.hero-art{display:none}.hero{padding:28px 22px}.products{gap:10px}.product{padding:10px}.pic{height:115px;font-size:52px}.price{font-size:15px}.add{padding:8px}.brand b{font-size:16px}}
+
+.whatsapp-float{position:fixed;bottom:22px;left:20px;z-index:20;display:inline-flex;align-items:center;gap:9px;background:#25D366;color:#063b20;padding:13px 18px;border-radius:999px;font-weight:800;box-shadow:0 8px 24px #0003;text-decoration:none}
+.whatsapp-float:hover{filter:brightness(.96)}
+</style>
+</head>
+<body>
+<div class="top">أهلاً بك في AHMED STORE — التقنية التي تحتاجها، في مكان واحد</div>
+<header><div class="nav">
+  <a class="brand" href="#"><div class="logo">A</div><div><b>AHMED STORE</b><small>متجر أحمد</small></div></a>
+  <form class="search" id="searchForm"><input id="searchInput" placeholder="ابحث عن هاتف، لابتوب، سماعة..." aria-label="ابحث عن منتج"><button>بحث</button></form>
+  <button class="cart" id="cartBtn">🛒 السلة <span class="count" id="cartCount">0</span></button>
+</div></header>
+<main>
+<section class="hero"><div class="hero-copy"><div class="eyebrow">وجهتك للأجهزة والإلكترونيات</div><h1>كل التكنولوجيا<br>اللي بتدور عليها!</h1><p>اكتشف مجموعة متنوعة من الهواتف، الكمبيوترات، السماعات، الأجهزة المنزلية وأكثر — بتجربة تسوق سهلة ومريحة.</p><button class="cta" onclick="document.getElementById('productsTitle').scrollIntoView({behavior:'smooth'})">تسوّق الآن ←</button></div><div class="hero-art">📱💻</div></section>
+<div class="section-head"><h2>تسوّق حسب القسم</h2><span>اختار القسم المناسب إلك</span></div>
+<section class="categories" id="categories">
+  <div class="cat active" data-cat="الكل"><i>🛍️</i><b>كل المنتجات</b></div>
+  <div class="cat" data-cat="هواتف"><i>📱</i><b>هواتف</b></div>
+  <div class="cat" data-cat="كمبيوتر"><i>💻</i><b>كمبيوتر ولابتوب</b></div>
+  <div class="cat" data-cat="صوتيات"><i>🎧</i><b>سماعات وصوتيات</b></div>
+  <div class="cat" data-cat="ألعاب"><i>🎮</i><b>ألعاب</b></div>
+  <div class="cat" data-cat="منزلية"><i>🏠</i><b>أجهزة منزلية</b></div>
+</section>
+<div class="section-head" id="productsTitle"><h2>منتجات مميزة</h2><span id="resultCount">منتجات تجريبية — قابلة للتعديل</span></div>
+<section class="products" id="products"></section>
+<section class="features">
+  <div class="feature"><i>🚚</i><div><b>توصيل حسب المنطقة</b><small>تفاصيل التوصيل تُحدد عند الطلب</small></div></div>
+  <div class="feature"><i>💬</i><div><b>تواصل مباشر</b><small>اسأل عن المنتج قبل الشراء</small></div></div>
+  <div class="feature"><i>🔒</i><div><b>تسوق بسهولة</b><small>خطوات طلب واضحة وبسيطة</small></div></div>
+</section>
+</main>
+<footer><b>AHMED STORE | متجر أحمد</b><p>كل الأجهزة في مكان واحد</p><small>© 2026 جميع الحقوق محفوظة</small></footer>
+<div class="toast" id="toast"></div>
+<a class="whatsapp-float" href="https://wa.me/972592570356" target="_blank" rel="noopener noreferrer" aria-label="تواصل معنا عبر واتساب">💬 واتساب: +972 59 257 0356</a>
+
+<script>
+const items=[
+ {name:"هاتف ذكي حديث",cat:"هواتف",icon:"📱",desc:"هاتف ذكي — أضف الموديل والمواصفات",price:299},
+ {name:"لابتوب للأعمال",cat:"كمبيوتر",icon:"💻",desc:"كمبيوتر محمول — أضف المعالج والذاكرة",price:549},
+ {name:"سماعات لاسلكية",cat:"صوتيات",icon:"🎧",desc:"صوت واضح واتصال لاسلكي",price:39},
+ {name:"ساعة ذكية",cat:"هواتف",icon:"⌚",desc:"ساعة ذكية — أضف المواصفات",price:59},
+ {name:"جهاز ألعاب",cat:"ألعاب",icon:"🎮",desc:"ترفيه وألعاب — أضف الموديل",price:399},
+ {name:"شاشة كمبيوتر",cat:"كمبيوتر",icon:"🖥️",desc:"شاشة عالية الوضوح",price:179},
+ {name:"مكبر صوت",cat:"صوتيات",icon:"🔊",desc:"مكبر صوت لاسلكي",price:45},
+ {name:"جهاز منزلي",cat:"منزلية",icon:"🏠",desc:"جهاز منزلي — أضف النوع والمواصفات",price:89}
+];
+let cart=[];let active="الكل";let query="";
+const products=document.getElementById("products");
+function render(){
+ const filtered=items.filter(p=>(active==="الكل"||p.cat===active)&&(p.name+" "+p.cat+" "+p.desc).toLowerCase().includes(query.toLowerCase()));
+ products.innerHTML=filtered.length?filtered.map((p,i)=>`<article class="product"><div class="pic">${p.icon}</div><span class="tag">${p.cat}</span><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="price-row"><span class="price">$${p.price}</span><button class="add" onclick="addToCart('${p.name}')">أضف للسلة +</button></div></article>`).join(""):'<div class="empty">ما لقينا منتجات مطابقة لبحثك.</div>';
+ document.getElementById("resultCount").textContent=`${filtered.length} منتجات`;
+}
+function addToCart(name){cart.push(name);document.getElementById("cartCount").textContent=cart.length;showToast("تمت إضافة "+name+" إلى السلة");}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+document.querySelectorAll(".cat").forEach(el=>el.addEventListener("click",()=>{document.querySelectorAll(".cat").forEach(c=>c.classList.remove("active"));el.classList.add("active");active=el.dataset.cat;render()}));
+document.getElementById("searchForm").addEventListener("submit",e=>{e.preventDefault();query=document.getElementById("searchInput").value;render()});
+document.getElementById("cartBtn").addEventListener("click",()=>{showToast(cart.length?`السلة تحتوي على ${cart.length} منتج: ${cart.join("، ")}`:"السلة فارغة حالياً")});
+render();
+</script>
+</body></html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تحدي ذاكرة الأرقام | Ahmed Safadi</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: #0b0f19;
+      color: #f3f6ff;
+      font-family: Tahoma, Arial, sans-serif;
+    }
+
+    main {
+      width: min(100%, 620px);
+      text-align: center;
+    }
+
+    h1 { font-size: clamp(24px, 6vw, 34px); }
+
+    .description {
+      color: #aeb7c8;
+      line-height: 1.8;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 18px;
+      background: #7c5cff22;
+      border: 1px solid #7c5cff77;
+      border-radius: 30px;
+      color: #c2b4ff;
+    }
+
+    .progress {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .step {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #39415a;
+      border-radius: 50%;
+      color: #aeb7c8;
+    }
+
+    .step.active {
+      background: #7c5cff;
+      color: white;
+      border-color: #7c5cff;
+    }
+
+    .step.done {
+      background: #163f32;
+      color: #89edb5;
+      border-color: #38966c;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0 12px;
+      padding: 15px;
+      background: #151b29;
+      border: 1px solid #252d40;
+      border-radius: 14px;
+      font-size: 14px;
+    }
+
+    .time-track {
+      height: 7px;
+      margin-bottom: 20px;
+      background: #252d40;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #time-bar {
+      width: 100%;
+      height: 100%;
+      background: #9478ff;
+      transform-origin: right;
+    }
+
+    #time-bar.danger { background: #ff697c; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .card {
+      width: 100%;
+      min-width: 0;
+      aspect-ratio: 1;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid #394263;
+      border-radius: 10px;
+      background: #192237;
+      color: #c2b4ff;
+      font: bold clamp(16px, 4vw, 30px) Tahoma, sans-serif;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background .15s, transform .15s;
+    }
+
+    .card:not(:disabled):hover { background: #293555; }
+
+    .card.open {
+      background: #42336c;
+      transform: scale(.95);
+      color: white;
+    }
+
+    .card.matched {
+      background: #163f32;
+      border-color: #38966c;
+      color: #89edb5;
+    }
+
+    .card:disabled { cursor: default; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid #b9a7ff;
+      outline-offset: 3px;
+    }
+
+    .result {
+      margin-top: 22px;
+      padding: 24px 16px;
+      background: #142d25;
+      border: 1px solid #38966c;
+      border-radius: 18px;
+    }
+
+    .result.loss {
+      background: #311e29;
+      border-color: #b9566b;
+    }
+
+    .result h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      color: #a4f5c8;
+    }
+
+    .result.loss h2 { color: #ffb0bd; }
+
+    .result p {
+      color: #d0d7e5;
+      line-height: 1.8;
+    }
+
+    .button {
+      margin-top: 18px;
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 11px;
+      background: #7c5cff;
+      color: white;
+      font: bold 15px Tahoma, sans-serif;
+      cursor: pointer;
+    }
+
+    .secondary {
+      background: #202a40;
+      border: 1px solid #394263;
+    }
+
+    .back {
+      display: inline-block;
+      margin: 24px 0;
+      color: #aeb7c8;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 400px) {
+      body { padding: 12px; }
+      .board { gap: 5px; }
+      .card { border-radius: 7px; }
+      .stats { padding: 12px; font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <span class="badge" id="level-label"></span>
+    <h1>تحدي ذاكرة الأرقام 🧠</h1>
+
+    <p class="description">
+      طابق الأرقام وتقدّم من السهل إلى الأسطوري!
+      <br>
+      يبدأ الوقت عند قلب أول بطاقة.
+    </p>
+
+    <div class="progress" id="progress"
+         role="group" aria-label="تقدم المستويات"></div>
+
+    <div class="stats">
+      <span>المتبقي: <b id="time">90</b> ث</span>
+      <span>المحاولات: <b id="moves">0</b></span>
+      <span>الأزواج: <b id="pairs">0</b>/<b id="total">6</b></span>
+    </div>
+
+    <div class="time-track" aria-hidden="true">
+      <div id="time-bar"></div>
+    </div>
+
+    <div class="board" id="board"
+         role="group" aria-label="بطاقات ذاكرة الأرقام"></div>
+
+    <div class="result" id="result" hidden>
+      <div role="status" aria-live="polite" aria-atomic="true">
+        <h2 id="result-title"></h2>
+        <p id="result-text"></p>
+      </div>
+      <button class="button" id="continue" type="button"></button>
+    </div>
+
+    <button class="button secondary" id="restart" type="button">
+      إعادة المستوى ↻
+    </button>
+
+    <br>
+    <a class="back" href="index.html">العودة إلى موقعي</a>
+  </main>
+
+  <script>
+    const levels = [
+       { name: "سهل",    pairs: 6,  time: 60,  columns: 4, delay: 900 },
+  { name: "متوسط",  pairs: 10, time: 90, columns: 4, delay: 700 },
+  { name: "صعب",    pairs: 18, time: 120, columns: 6, delay: 500 },
+  { name: "خبير",   pairs: 24, time: 160, columns: 6, delay: 400 },
+  { name: "أسطوري", pairs: 32, time: 230, columns: 8, delay: 300 }
+];
+
+    const board = document.getElementById("board");
+    const timeDisplay = document.getElementById("time");
+    const movesDisplay = document.getElementById("moves");
+    const pairsDisplay = document.getElementById("pairs");
+    const totalDisplay = document.getElementById("total");
+    const timeBar = document.getElementById("time-bar");
+    const levelLabel = document.getElementById("level-label");
+    const progress = document.getElementById("progress");
+
+    const result = document.getElementById("result");
+    const resultTitle = document.getElementById("result-title");
+    const resultText = document.getElementById("result-text");
+    const continueButton = document.getElementById("continue");
+    const restartButton = document.getElementById("restart");
+
+    let levelIndex = 0;
+    let selected = [];
+    let locked = false;
+    let gameOver = false;
+    let wonLevel = false;
+    let moves = 0;
+    let pairs = 0;
+    let deadline = null;
+    let timer = null;
+    let flipTimeout = null;
+
+    function shuffle(items) {
+      for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+      }
+      return items;
+    }
+
+    function drawProgress() {
+      progress.replaceChildren();
+
+      levels.forEach((level, index) => {
+        const step = document.createElement("span");
+        const completed =
+          index < levelIndex || (index === levelIndex && wonLevel);
+
+        step.className = "step";
+        step.textContent = completed ? "✓" : index + 1;
+        step.setAttribute(
+          "aria-label",
+          `المستوى ${index + 1}: ${level.name}${completed ? "، مكتمل" : ""}`
+        );
+
+        if (completed) {
+          step.classList.add("done");
+        } else if (index === levelIndex) {
+          step.classList.add("active");
+        }
+
+        if (index === levelIndex) {
+          step.setAttribute("aria-current", "step");
+        }
+
+        progress.appendChild(step);
+      });
+    }
+
+    function finishGame(won) {
+      if (gameOver) return;
+
+      gameOver = true;
+      wonLevel = won;
+      locked = true;
+
+      clearInterval(timer);
+      clearTimeout(flipTimeout);
+
+      board.querySelectorAll("button").forEach(card => {
+        card.disabled = true;
+      });
+
+      const level = levels[levelIndex];
+      const lastLevel = levelIndex === levels.length - 1;
+
+      result.hidden = false;
+      result.classList.toggle("loss", !won);
+
+      if (won) {
+        resultTitle.textContent = lastLevel
+          ? "🏆 أنت بطل! أنهيت جميع المستويات!"
+          : "🎉 أنت رائع! أنهيت المستوى بنجاح 👏";
+
+        resultText.textContent =
+          `أنهيت المستوى ${levelIndex + 1} بـ${moves} محاولة!`;
+
+        continueButton.textContent = lastLevel
+          ? "ابدأ من المستوى الأول ↻"
+          : "المستوى التالي ←";
+      } else {
+        timeDisplay.textContent = "0";
+        timeBar.style.transform = "scaleX(0)";
+        timeBar.classList.add("danger");
+
+        resultTitle.textContent = "⏰ انتهى الوقت!";
+        resultText.textContent =
+          `طابقت ${pairs} من ${level.pairs} زوجاً. حاول مرة ثانية، بتقدر!`;
+
+        continueButton.textContent = "حاول مرة ثانية ↻";
+      }
+
+      drawProgress();
+      continueButton.focus({ preventScroll: true });
+    }
+
+    function updateTime() {
+      if (deadline === null || gameOver) return;
+
+      const remaining = Math.max(
+        0,
+        (deadline - performance.now()) / 1000
+      );
+
+      timeDisplay.textContent = Math.ceil(remaining);
+      timeBar.style.transform =
+        `scaleX(${remaining / levels[levelIndex].time})`;
+
+      timeBar.classList.toggle("danger", remaining <= 10);
+
+      if (remaining === 0) {
+        finishGame(false);
+      }
+    }
+
+    function flipCard(card) {
+      if (gameOver || card.disabled) return;
+
+      if (deadline !== null) {
+        updateTime();
+        if (gameOver) return;
+      }
+
+      if (locked || selected.includes(card)) return;
+
+      const level = levels[levelIndex];
+
+      if (deadline === null) {
+        deadline = performance.now() + level.time * 1000;
+        timer = setInterval(updateTime, 100);
+      }
+
+      card.textContent = card.dataset.value;
+      card.classList.add("open");
+      card.setAttribute("aria-pressed", "true");
+      card.setAttribute("aria-label", `الرقم ${card.dataset.value}`);
+      selected.push(card);
+
+      if (selected.length < 2) return;
+
+      movesDisplay.textContent = ++moves;
+      const [first, second] = selected;
+
+      if (first.dataset.value === second.dataset.value) {
+        [first, second].forEach(item => {
+          item.classList.add("matched");
+          item.disabled = true;
+          item.setAttribute(
+            "aria-label",
+            `زوج مطابق، الرقم ${item.dataset.value}`
+          );
+        });
+
+        selected = [];
+        pairsDisplay.textContent = ++pairs;
+
+        if (pairs === level.pairs) {
+          finishGame(true);
+        }
+      } else {
+        locked = true;
+
+        flipTimeout = setTimeout(() => {
+          if (gameOver) return;
+
+          [first, second].forEach(item => {
+            item.textContent = "؟";
+            item.classList.remove("open");
+            item.setAttribute("aria-pressed", "false");
+            item.setAttribute(
+              "aria-label",
+              `بطاقة ${item.dataset.position} مخفية`
+            );
+          });
+
+          selected = [];
+          locked = false;
+        }, level.delay);
+      }
+    }
+
+    function startLevel(focusBoard = false) {
+      clearInterval(timer);
+      clearTimeout(flipTimeout);
+
+      selected = [];
+      locked = false;
+      gameOver = false;
+      wonLevel = false;
+      moves = 0;
+      pairs = 0;
+      deadline = null;
+
+      const level = levels[levelIndex];
+
+      levelLabel.textContent =
+        `المستوى ${levelIndex + 1} من ${levels.length} — ${level.name}`;
+
+      timeDisplay.textContent = level.time;
+      movesDisplay.textContent = "0";
+      pairsDisplay.textContent = "0";
+      totalDisplay.textContent = level.pairs;
+
+      timeBar.style.transform = "scaleX(1)";
+      timeBar.classList.remove("danger");
+
+      result.hidden = true;
+      result.classList.remove("loss");
+      resultTitle.textContent = "";
+      resultText.textContent = "";
+
+      board.style.setProperty("--columns", level.columns);
+      board.replaceChildren();
+
+      const numbers = Array.from(
+        { length: level.pairs },
+        (_, index) => index + 1
+      );
+
+      shuffle([...numbers, ...numbers]).forEach((number, index) => {
+        const card = document.createElement("button");
+
+        card.type = "button";
+        card.className = "card";
+        card.dataset.value = number;
+        card.dataset.position = index + 1;
+        card.textContent = "؟";
+
+        card.setAttribute("aria-pressed", "false");
+        card.setAttribute("aria-label", `بطاقة ${index + 1} مخفية`);
+
+        card.addEventListener("click", () => flipCard(card));
+        board.appendChild(card);
+      });
+
+      drawProgress();
+
+      if (focusBoard) {
+        board.querySelector("button").focus({ preventScroll: true });
+      }
+    }
+
+    continueButton.addEventListener("click", () => {
+      if (!gameOver) return;
+
+      if (wonLevel) {
+        levelIndex = (levelIndex + 1) % levels.length;
+      }
+
+      startLevel(true);
+    });
+
+    restartButton.addEventListener("click", () => {
+      startLevel(true);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) updateTime();
+    });
+
+    startLevel();
+  </script>
+</body>
+</html>
